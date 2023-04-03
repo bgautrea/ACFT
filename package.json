@@ -1,0 +1,29 @@
+{
+  "name": "react-acft",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "Joseph Fusco",
+    "email": "hello@josephfus.co",
+    "url": "https://josephfus.co/"
+  },
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-scripts": "1.0.14",
+    "react-validation": "^3.0.6"
+  },
+  "scripts": {
+    "deploy": "npm run build&&gh-pages -d build",
+    "build-css": "sass -I ./src -I ./node_modules src/:src/",
+    "watch-css": "npm run build-css && sass -I ./src -I ./node_modules src/:src/ --watch",
+    "start": "NODE_PATH=src react-scripts start",
+    "build": "NODE_PATH=src react-scripts build",
+    "test": "NODE_PATH=src react-scripts test --env=jsdom"
+  },
+  "devDependencies": {
+    "gh-pages": "^1.0.0",
+    "sass": "^1.60.0",
+    "npm-run-all": "^4.1.1"
+  }
+}

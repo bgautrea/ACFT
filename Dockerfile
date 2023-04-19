@@ -5,6 +5,8 @@ COPY ./ /run/ACFT
 WORKDIR /run/ACFT
 
 RUN npm install --save && \
-    npm run build-css
+    npm install -g serve && \
+    npm run build-css && \
+    npm build
 
-CMD npm start
+CMD serve -s build

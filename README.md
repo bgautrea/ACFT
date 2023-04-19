@@ -1,4 +1,4 @@
-# ACFT
+# ACFT - Army Combat Fitness Test Calculator
 A fork of [Joseph Fusco's](https://github.com/josephfusco/APFT) progressive web app (PWA) calculator for the United States Army _Combat_ Fitness Test built with [React.js](https://reactjs.org/).
 
 ## Development

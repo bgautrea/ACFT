@@ -15,3 +15,7 @@ In the project directory, you can run:
 - `npm install`
 - `npm run build-css`
 - `npm start`
+
+Dockerfile will build and run all of the above.
+
+Image on [Dockerhub](https://hub.docker.com/repository/docker/bgautrea/acft/general)

@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name": "Joseph Fusco",
-    "email": "hello@josephfus.co",
-    "url": "https://josephfus.co/"
+    "name": "Brian Gautreau",
+    "email": "brian@briangautreau.com",
+    "url": "https://briangautreau.com/"
   },
   "dependencies": {
     "react": "^16.0.0",

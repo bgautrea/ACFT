@@ -1,6 +1,6 @@
 FROM node:latest
 
-COPY /root/ACFT /run/ACFT
+COPY ./ /run/ACFT
 
 WORKDIR /run/ACFT
 

@@ -5,6 +5,6 @@ COPY /root/ACFT /run/ACFT
 WORKDIR /run/ACFT
 
 RUN npm install --save && \
-    npm build-css
+    npm run build-css
 
 CMD npm start

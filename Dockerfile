@@ -1,12 +1,15 @@
-FROM node:latest
+#FROM node:latest as build
+FROM node:latest as build
+WORKDIR /run/app
+COPY . /run/app
 
-COPY ./ /run/ACFT
-
-WORKDIR /run/ACFT
-
-RUN npm install --save && \
-    npm install -g serve && \
+RUN npm i && \
+#    npm i -g serve && \
     npm run build-css && \
     npm run build
 
-CMD serve -s build
+#CMD serve -s build
+
+FROM nginx:latest
+EXPOSE 80
+COPY --from=build /run/app/build /usr/share/nginx/html

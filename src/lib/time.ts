@@ -30,3 +30,15 @@ export function formatTime(seconds: number): string {
   const s = seconds % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
+
+/**
+ * Normalizes mobile time input by auto-inserting a colon. Strips non-digits,
+ * caps at 4 digits, and splits the last two as seconds. Lets users on numeric
+ * mobile keypads (no `:` key) type `239` and see `2:39`.
+ */
+export function normalizeTimeInput(input: string): string {
+  const digits = input.replace(/\D/g, '').slice(0, 4);
+  if (digits.length === 0) return '';
+  if (digits.length <= 2) return digits;
+  return digits.slice(0, -2) + ':' + digits.slice(-2);
+}

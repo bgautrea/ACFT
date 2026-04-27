@@ -1,6 +1,13 @@
 import type { Action, EventCode } from '../lib/types';
+import { normalizeTimeInput } from '../lib/time';
 
-type Props = {
+const TIME_EVENTS: ReadonlySet<EventCode> = new Set(['SDC', 'PLK', 'TMR']);
+
+function inputModeFor(code: EventCode): 'numeric' | 'decimal' {
+  return code === 'SPT' ? 'decimal' : 'numeric';
+}
+
+export type Props = {
   code: EventCode;
   label: string;
   placeholder: string;
@@ -29,6 +36,7 @@ export default function EventRow({
       ? 'text-pass'
       : 'text-fail';
   const pointsDisplay = hasValue ? String(points) : '';
+  const isTime = TIME_EVENTS.has(code);
 
   return (
     <div className="grid grid-cols-[3.5rem_1fr_3rem_4.5rem] items-center gap-3 py-3 border-b border-paper-2 last:border-b-0">
@@ -41,14 +49,15 @@ export default function EventRow({
       <input
         id={id}
         type="text"
-        inputMode="decimal"
+        inputMode={inputModeFor(code)}
         autoComplete="off"
         spellCheck={false}
         value={value}
         placeholder={placeholder}
-        onChange={(e) =>
-          dispatch({ type: 'set-raw', event: code, value: e.target.value })
-        }
+        onChange={(e) => {
+          const next = isTime ? normalizeTimeInput(e.target.value) : e.target.value;
+          dispatch({ type: 'set-raw', event: code, value: next });
+        }}
         className="num bg-transparent border-0 border-b border-paper-2 px-1 py-1 text-ink placeholder:text-ink-lo focus:border-accent focus:outline-none w-full"
       />
       <span

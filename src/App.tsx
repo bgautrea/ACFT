@@ -9,6 +9,7 @@ import RestoreBanner from './components/RestoreBanner';
 import { reducer } from './lib/reducer';
 import { save } from './lib/persist';
 import { scoreAll } from './lib/scoring';
+import { deltaAll } from './lib/delta';
 import { EVENT_CODES, type State } from './lib/types';
 import { composeInitialState } from './lib/initialState';
 import { useUrlSync } from './lib/useUrlSync';
@@ -26,6 +27,8 @@ export default function App() {
   useUrlSync(reducerState);
 
   const result = useMemo(() => scoreAll(reducerState), [reducerState]);
+
+  const deltas = useMemo(() => deltaAll(reducerState, result), [reducerState, result]);
 
   const hasInput = useMemo(
     () => EVENT_CODES.some((c) => reducerState.raw[c].trim() !== ''),
@@ -65,7 +68,12 @@ export default function App() {
       />
       <main className="mx-auto w-full max-w-[720px] px-4 flex-1">
         <IdentityRow age={reducerState.age} sex={reducerState.sex} dispatch={dispatch} />
-        <EventForm raw={reducerState.raw} result={result} dispatch={dispatch} />
+        <EventForm
+          raw={reducerState.raw}
+          result={result}
+          deltas={deltas}
+          dispatch={dispatch}
+        />
         <Footer />
       </main>
     </div>

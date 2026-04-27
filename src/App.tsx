@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useReducer } from 'react';
-import Header from './components/Header';
+import Wordmark from './components/Wordmark';
+import TotalStrip from './components/TotalStrip';
+import IdentityRow from './components/IdentityRow';
 import EventForm from './components/EventForm';
-import ResultsPanel from './components/ResultsPanel';
 import Footer from './components/Footer';
 import { reducer } from './lib/reducer';
 import { hydrate, save } from './lib/persist';
@@ -17,25 +18,31 @@ export default function App() {
   }, [state]);
 
   const result = useMemo(() => scoreAll(state), [state]);
+
   const hasInput = useMemo(
     () => EVENT_CODES.some((c) => state.raw[c].trim() !== ''),
     [state.raw],
   );
 
+  const isComplete = useMemo(
+    () => EVENT_CODES.every((c) => state.raw[c].trim() !== ''),
+    [state.raw],
+  );
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="mx-auto w-full max-w-5xl px-4 py-8 flex-1">
-        <Header
-          age={state.age}
-          sex={state.sex}
-          overallPass={result.overallPass}
-          hasInput={hasInput}
-          dispatch={dispatch}
-        />
-        <div className="grid md:grid-cols-[1.4fr_1fr] gap-8">
-          <EventForm raw={state.raw} dispatch={dispatch} />
-          <ResultsPanel result={result} />
-        </div>
+    <div className="min-h-screen flex flex-col bg-paper text-ink">
+      <div className="mx-auto w-full max-w-[720px] px-4">
+        <Wordmark />
+      </div>
+      <TotalStrip
+        total={result.total}
+        hasInput={hasInput}
+        isComplete={isComplete}
+        overallPass={result.overallPass}
+      />
+      <main className="mx-auto w-full max-w-[720px] px-4 flex-1">
+        <IdentityRow age={state.age} sex={state.sex} dispatch={dispatch} />
+        <EventForm raw={state.raw} result={result} dispatch={dispatch} />
         <Footer />
       </main>
     </div>

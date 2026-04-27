@@ -8,4 +8,4 @@ resources:
 images:
 - name: acft-thegeauxpro-com
   newName: docker.io/bgautrea/acft
-  newTag: latest
+  newTag: sha-41e071a

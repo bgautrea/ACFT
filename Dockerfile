@@ -5,7 +5,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginxinc/nginx-unprivileged:1.27-alpine-slim
+FROM nginxinc/nginx-unprivileged:1.29-alpine-slim
 USER root
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 USER 101

@@ -76,6 +76,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          provenance: mode=max
+          sbom: true
 
       - name: Pin kustomization to the new sha-tagged image
         if: github.ref == 'refs/heads/main'

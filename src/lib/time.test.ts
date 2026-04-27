@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseTime, formatTime } from './time';
+import { parseTime, formatTime, normalizeTimeInput } from './time';
 
 describe('parseTime', () => {
   it('parses MM:SS', () => {
@@ -40,5 +40,39 @@ describe('formatTime', () => {
   });
   it('returns 0:00 for 0', () => {
     expect(formatTime(0)).toBe('0:00');
+  });
+});
+
+describe('normalizeTimeInput', () => {
+  it('returns empty string for empty input', () => {
+    expect(normalizeTimeInput('')).toBe('');
+  });
+  it('returns empty string for non-digit only input', () => {
+    expect(normalizeTimeInput('abc')).toBe('');
+  });
+  it('passes single digit through unchanged', () => {
+    expect(normalizeTimeInput('2')).toBe('2');
+  });
+  it('passes two digits through unchanged', () => {
+    expect(normalizeTimeInput('23')).toBe('23');
+  });
+  it('inserts colon after first of three digits', () => {
+    expect(normalizeTimeInput('239')).toBe('2:39');
+  });
+  it('inserts colon after second of four digits', () => {
+    expect(normalizeTimeInput('1430')).toBe('14:30');
+  });
+  it('caps at 4 digits, ignoring excess', () => {
+    expect(normalizeTimeInput('12345')).toBe('12:34');
+  });
+  it('round-trips an already-formatted value', () => {
+    expect(normalizeTimeInput('2:39')).toBe('2:39');
+  });
+  it('strips other non-digit characters', () => {
+    expect(normalizeTimeInput('2 : 39')).toBe('2:39');
+    expect(normalizeTimeInput('2m39s')).toBe('2:39');
+  });
+  it('preserves leading zero on minute when typed', () => {
+    expect(normalizeTimeInput('045')).toBe('0:45');
   });
 });

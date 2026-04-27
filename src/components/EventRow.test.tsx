@@ -96,4 +96,83 @@ describe('EventRow', () => {
     );
     expect(screen.queryByTestId('acft-delta-MDL')).not.toBeInTheDocument();
   });
+
+  it('uses inputMode="numeric" for non-SPT events', () => {
+    render(<EventRow {...baseProps} />);
+    expect(screen.getByPlaceholderText('240 lb')).toHaveAttribute('inputMode', 'numeric');
+  });
+
+  it('uses inputMode="decimal" for SPT (decimal meters)', () => {
+    render(
+      <EventRow
+        code="SPT"
+        label="SPT"
+        placeholder="9.2 m"
+        value=""
+        points={0}
+        pass={false}
+        dispatch={() => {}}
+      />,
+    );
+    expect(screen.getByPlaceholderText('9.2 m')).toHaveAttribute('inputMode', 'decimal');
+  });
+
+  it('auto-formats time-event input on change (TMR: 239 → 2:39)', () => {
+    const dispatch = vi.fn();
+    render(
+      <EventRow
+        code="TMR"
+        label="2MR"
+        placeholder="14:42"
+        value=""
+        points={0}
+        pass={false}
+        dispatch={dispatch}
+      />,
+    );
+    fireEvent.change(screen.getByPlaceholderText('14:42'), {
+      target: { value: '239' },
+    });
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'set-raw',
+      event: 'TMR',
+      value: '2:39',
+    });
+  });
+
+  it('auto-formats time-event input on change (SDC: 1430 → 14:30)', () => {
+    const dispatch = vi.fn();
+    render(
+      <EventRow
+        code="SDC"
+        label="SDC"
+        placeholder="2:14"
+        value=""
+        points={0}
+        pass={false}
+        dispatch={dispatch}
+      />,
+    );
+    fireEvent.change(screen.getByPlaceholderText('2:14'), {
+      target: { value: '1430' },
+    });
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'set-raw',
+      event: 'SDC',
+      value: '14:30',
+    });
+  });
+
+  it('does not normalize non-time events (MDL: "240" stays "240")', () => {
+    const dispatch = vi.fn();
+    render(<EventRow {...baseProps} dispatch={dispatch} />);
+    fireEvent.change(screen.getByPlaceholderText('240 lb'), {
+      target: { value: '240' },
+    });
+    expect(dispatch).toHaveBeenCalledWith({
+      type: 'set-raw',
+      event: 'MDL',
+      value: '240',
+    });
+  });
 });

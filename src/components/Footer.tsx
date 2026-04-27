@@ -5,7 +5,7 @@ export default function Footer() {
         ACFT Calculator. Modified from APFT by{' '}
         <a
           href="https://josephfus.co/"
-          className="text-ink-md hover:text-accent underline-offset-2 hover:underline"
+          className="text-ink-md hover:text-accent-hi underline-offset-2 hover:underline"
         >
           Joseph Fusco
         </a>

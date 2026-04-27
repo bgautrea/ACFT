@@ -51,7 +51,7 @@ export default function EventRow({
       />
       <span
         data-testid={`acft-points-${code}`}
-        className={`num text-right text-base ${pointsClass}`}
+        className={`num text-right text-base transition-colors duration-150 ${pointsClass}`}
       >
         {pointsDisplay}
       </span>

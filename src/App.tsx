@@ -31,7 +31,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-paper text-ink">
-      <div className="mx-auto w-full max-w-[720px] px-4 flex-1">
+      <div className="mx-auto w-full max-w-[720px] px-4">
         <Wordmark />
       </div>
       <TotalStrip

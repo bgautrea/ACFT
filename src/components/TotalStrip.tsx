@@ -29,7 +29,7 @@ export default function TotalStrip({
           <span
             data-testid="acft-total"
             aria-live="polite"
-            className={`num text-5xl font-medium ${totalClass}`}
+            className={`num text-5xl font-medium transition-colors duration-150 ${totalClass}`}
           >
             {totalDisplay}
           </span>
@@ -37,7 +37,7 @@ export default function TotalStrip({
         </div>
         <span
           data-testid="acft-status"
-          className={`text-xs tracking-[0.18em] uppercase ${statusClass}`}
+          className={`text-xs tracking-[0.18em] uppercase transition-colors duration-150 ${statusClass}`}
         >
           {status}
         </span>

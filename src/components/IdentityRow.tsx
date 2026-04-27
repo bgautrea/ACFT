@@ -21,7 +21,7 @@ export default function IdentityRow({ age, sex, dispatch }: Props) {
           type="number"
           min={17}
           max={99}
-          defaultValue={age}
+          value={age}
           onChange={(e) =>
             dispatch({ type: 'set-age', age: Number(e.target.value) })
           }

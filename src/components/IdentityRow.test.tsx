@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import IdentityRow from './IdentityRow';
 
@@ -21,13 +21,15 @@ describe('IdentityRow', () => {
     );
   });
 
-  it('dispatches set-age when the age input changes', async () => {
+  it('dispatches set-age when the age input changes', () => {
+    // Using fireEvent here (not userEvent) because the input is controlled:
+    // user.type/clear simulate keystrokes, but with a vi.fn() dispatch the
+    // parent state never updates, so each keystroke dispatches the wrong
+    // concatenated value. fireEvent.change matches the real interaction —
+    // the reducer is what owns the value.
     const dispatch = vi.fn();
-    const user = userEvent.setup();
     render(<IdentityRow age={22} sex="M" dispatch={dispatch} />);
-    const input = screen.getByLabelText(/age/i);
-    await user.clear(input);
-    await user.type(input, '30');
+    fireEvent.change(screen.getByLabelText(/age/i), { target: { value: '30' } });
     expect(dispatch).toHaveBeenCalledWith({ type: 'set-age', age: 30 });
   });
 

@@ -5,7 +5,7 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine
+FROM nginx:1.27-alpine-slim
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 EXPOSE 8080
 COPY default.conf /etc/nginx/conf.d/default.conf

@@ -5,8 +5,10 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine-slim
+FROM nginxinc/nginx-unprivileged:1.27-alpine-slim
+USER root
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
+USER 101
 EXPOSE 8080
-COPY default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --chown=101:101 default.conf /etc/nginx/conf.d/default.conf
+COPY --from=build --chown=101:101 /app/dist /usr/share/nginx/html

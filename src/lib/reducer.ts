@@ -21,5 +21,13 @@ export function reducer(state: State, action: Action): State {
       return { ...state, raw: { ...state.raw, [action.event satisfies EventCode]: action.value } };
     case 'reset':
       return { ...initialState, raw: { ...emptyRaw } };
+    case 'load-from-url': {
+      const { partial } = action;
+      return {
+        age: partial.age ?? state.age,
+        sex: partial.sex ?? state.sex,
+        raw: partial.raw ? { ...state.raw, ...partial.raw } : state.raw,
+      };
+    }
   }
 }

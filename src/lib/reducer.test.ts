@@ -37,4 +37,34 @@ describe('reducer', () => {
     expect(next).not.toBe(initialState);
     expect(next.age).toBe(initialState.age);
   });
+
+  it('load-from-url merges age and sex while leaving raw untouched when raw is absent', () => {
+    const start = { ...initialState, raw: { ...initialState.raw, MDL: '240' } };
+    const next = reducer(start, { type: 'load-from-url', partial: { age: 35, sex: 'F' } });
+    expect(next.age).toBe(35);
+    expect(next.sex).toBe('F');
+    expect(next.raw.MDL).toBe('240');
+  });
+
+  it('load-from-url merges raw at the field level', () => {
+    const start = {
+      ...initialState,
+      raw: { ...initialState.raw, MDL: '240', SPT: '12.5' },
+    };
+    const next = reducer(start, {
+      type: 'load-from-url',
+      partial: { raw: { HRP: '45' } },
+    });
+    expect(next.raw.MDL).toBe('240');
+    expect(next.raw.SPT).toBe('12.5');
+    expect(next.raw.HRP).toBe('45');
+  });
+
+  it('load-from-url with empty partial is a no-op for state values', () => {
+    const start = { ...initialState, age: 30 };
+    const next = reducer(start, { type: 'load-from-url', partial: {} });
+    expect(next.age).toBe(30);
+    expect(next.sex).toBe(start.sex);
+    expect(next.raw).toEqual(start.raw);
+  });
 });

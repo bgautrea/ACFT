@@ -127,3 +127,57 @@ describe('gap-in-table resilience', () => {
     expect(a).toBeGreaterThanOrEqual(b);
   });
 });
+
+import { thresholdFor, parseRaw } from './scoring';
+
+describe('thresholdFor', () => {
+  it('M/MDL 22-26 → 140 (smallest floor key with ≥60 pts)', () => {
+    expect(thresholdFor('MDL', 22, 'M')).toBe(140);
+  });
+  it('M/SPT 22-26 → 63 (smallest floor key with ≥60 pts, in decimeters)', () => {
+    expect(thresholdFor('SPT', 22, 'M')).toBe(63);
+  });
+  it('M/HRP 22-26 → 10', () => {
+    expect(thresholdFor('HRP', 22, 'M')).toBe(10);
+  });
+  it('M/SDC 22-26 → 231 (largest ceiling key with ≥60 pts, in mmss)', () => {
+    expect(thresholdFor('SDC', 22, 'M')).toBe(231);
+  });
+  it('M/PLK 22-26 → 125 (smallest floor key with ≥60 pts, in mmss)', () => {
+    expect(thresholdFor('PLK', 22, 'M')).toBe(125);
+  });
+  it('M/TMR 22-26 → 2200 (largest ceiling key with ≥60 pts, in mmss)', () => {
+    expect(thresholdFor('TMR', 22, 'M')).toBe(2200);
+  });
+  it('F/MDL 22-26 → 120 (sex-sensitive)', () => {
+    expect(thresholdFor('MDL', 22, 'F')).toBe(120);
+  });
+  it('cached repeat call returns same value', () => {
+    expect(thresholdFor('MDL', 22, 'M')).toBe(140);
+    expect(thresholdFor('MDL', 22, 'M')).toBe(140);
+  });
+});
+
+describe('parseRaw (public)', () => {
+  it('returns 0 for empty string', () => {
+    expect(parseRaw('MDL', '')).toBe(0);
+  });
+  it('returns 0 for whitespace', () => {
+    expect(parseRaw('MDL', '   ')).toBe(0);
+  });
+  it('returns parsed number for MDL', () => {
+    expect(parseRaw('MDL', '240')).toBe(240);
+  });
+  it('floors fractional reps for HRP', () => {
+    expect(parseRaw('HRP', '38.7')).toBe(38);
+  });
+  it('returns the meters value for SPT', () => {
+    expect(parseRaw('SPT', '9.2')).toBe(9.2);
+  });
+  it('parses time for TMR (returns seconds)', () => {
+    expect(parseRaw('TMR', '15:00')).toBe(900);
+  });
+  it('returns null for unparseable input', () => {
+    expect(parseRaw('MDL', 'abc')).toBeNull();
+  });
+});

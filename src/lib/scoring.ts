@@ -134,7 +134,7 @@ export function scoreTMR(seconds: number, age: number, sex: Sex): EventResult {
   return { points, pass: passOf(points) };
 }
 
-function parseRaw(event: EventCode, raw: string): number | null {
+export function parseRaw(event: EventCode, raw: string): number | null {
   if (raw.trim() === '') return 0;
   if (event === 'SPT') {
     const n = Number(raw);
@@ -145,6 +145,53 @@ function parseRaw(event: EventCode, raw: string): number | null {
     return Number.isFinite(n) ? Math.floor(n) : null;
   }
   return parseTime(raw);
+}
+
+const thresholdCache = new Map<string, number | null>();
+
+const PAD4_EVENTS: ReadonlySet<EventCode> = new Set(['SDC', 'PLK', 'TMR']);
+const CEILING_EVENTS: ReadonlySet<EventCode> = new Set(['SDC', 'TMR']);
+
+/**
+ * Returns the smallest internal-units key whose score for this age-bucket and sex
+ * is ≥ 60 (the per-event pass threshold). For ceiling events (SDC, TMR), returns
+ * the largest such key — the user's actual time must be ≤ that key. Returns null
+ * if no key in the table meets the threshold (defensive; should not occur for the
+ * shipped standards.json).
+ */
+export function thresholdFor(code: EventCode, age: number, sex: Sex): number | null {
+  const bucket = bucketAge(age);
+  const cacheKey = `${sex}.${code}.${bucket}`;
+  const cached = thresholdCache.get(cacheKey);
+  if (cached !== undefined) return cached;
+
+  const table = tableFor(sex, code);
+  const keys = sortedNumericKeys(table);
+  const isPad4 = PAD4_EVENTS.has(code);
+  const isCeiling = CEILING_EVENTS.has(code);
+
+  let result: number | null = null;
+  if (isCeiling) {
+    for (let i = keys.length - 1; i >= 0; i--) {
+      const k = keys[i];
+      const tableKey = isPad4 ? pad4(k) : String(k);
+      if ((table[tableKey]?.[bucket] ?? 0) >= 60) {
+        result = k;
+        break;
+      }
+    }
+  } else {
+    for (const k of keys) {
+      const tableKey = isPad4 ? pad4(k) : String(k);
+      if ((table[tableKey]?.[bucket] ?? 0) >= 60) {
+        result = k;
+        break;
+      }
+    }
+  }
+
+  thresholdCache.set(cacheKey, result);
+  return result;
 }
 
 export function scoreAll(state: State): ScoreResult {

@@ -1,16 +1,11 @@
-#FROM node:latest as build
-FROM node:latest as build
-WORKDIR /run/app
-COPY . /run/app
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
 
-RUN npm i && \
-#    npm i -g serve && \
-    npm run build-css && \
-    npm run build
-
-#CMD serve -s build
-
-FROM nginx:latest
+FROM nginx:1.27-alpine
 EXPOSE 8080
 COPY default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /run/app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html

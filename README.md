@@ -1,21 +1,33 @@
 # ACFT - Army Combat Fitness Test Calculator
-A fork of [Joseph Fusco's](https://github.com/josephfusco/APFT) progressive web app (PWA) calculator for the United States Army _Combat_ Fitness Test built with [React.js](https://reactjs.org/).
+
+Score calculator for the U.S. Army Combat Fitness Test. Static SPA, dark "Operations" theme, mobile-friendly.
+
+A modernized rewrite of [Joseph Fusco's APFT](https://github.com/josephfusco/APFT) progressive web app.
 
 ## Development
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
-Visit that project for more information on how to perform common tasks [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
-### Updated to use SASS
-Migrated from node-sass-chokidar to sass
+Requires Node 22+.
 
-### Available Scripts
-In the project directory, you can run:
-## How to Run
+```bash
+npm install
+npm run dev        # start dev server
+npm test           # run unit + integration tests
+npm run typecheck  # TypeScript-only check
+npm run build      # production build to dist/
+npm run preview    # preview the production build
+```
 
-- `npm install`
-- `npm run build-css`
-- `npm start`
+## Deploy
 
-Dockerfile will build and run all of the above.
+Container build (multi-stage, nginx-served):
 
-Image on [Dockerhub](https://hub.docker.com/repository/docker/bgautrea/acft/general)
+```bash
+docker build -t acft .
+docker run --rm -p 8080:8080 acft
+```
+
+Image on [Dockerhub](https://hub.docker.com/repository/docker/bgautrea/acft/general).
+
+## Stack
+
+Vite 5 / React 19 / TypeScript / Tailwind v4 / Vitest. PWA via `vite-plugin-pwa`.

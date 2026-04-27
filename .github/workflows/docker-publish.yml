@@ -13,7 +13,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
 
     steps:
@@ -76,6 +76,23 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Pin kustomization to the new sha-tagged image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          SHORT_SHA=$(git rev-parse --short=7 HEAD)
+          NEW_TAG="sha-${SHORT_SHA}"
+          sed -i -E "s|^([[:space:]]*newTag:[[:space:]]+).*|\1${NEW_TAG}|" k8s/kustomization.yaml
+          if git diff --quiet k8s/kustomization.yaml; then
+            echo "kustomization already pinned to ${NEW_TAG}; nothing to commit"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add k8s/kustomization.yaml
+          git commit -m "ci: pin kustomization image to ${NEW_TAG} [skip ci]"
+          git push origin HEAD:main
 
       - name: Docker Scout - quickview summary (post-push)
         if: always()

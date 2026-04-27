@@ -1,20 +1,38 @@
-import type { EventCode } from '../lib/types';
+import type { Action, EventCode } from '../lib/types';
 
 type Props = {
   code: EventCode;
   label: string;
-  value: string;
   placeholder: string;
-  onChange: (value: string) => void;
+  value: string;
+  points: number;
+  pass: boolean;
+  dispatch: (action: Action) => void;
 };
 
-export default function EventRow({ code, label, value, placeholder, onChange }: Props) {
+export default function EventRow({
+  code,
+  label,
+  placeholder,
+  value,
+  points,
+  pass,
+  dispatch,
+}: Props) {
   const id = `acft-${code.toLowerCase()}`;
+  const hasValue = value.trim() !== '';
+  const pointsClass = !hasValue
+    ? 'text-ink-lo'
+    : pass
+      ? 'text-pass'
+      : 'text-fail';
+  const pointsDisplay = hasValue ? String(points) : '';
+
   return (
-    <div className="flex items-center gap-4 py-3 border-b border-divider last:border-b-0">
+    <div className="grid grid-cols-[3.5rem_1fr_3rem] items-center gap-4 py-3 border-b border-paper-2 last:border-b-0">
       <label
         htmlFor={id}
-        className="w-16 text-[11px] tracking-widest uppercase text-text-md"
+        className="text-[11px] tracking-[0.18em] uppercase text-ink-md font-medium"
       >
         {label}
       </label>
@@ -26,9 +44,17 @@ export default function EventRow({ code, label, value, placeholder, onChange }: 
         spellCheck={false}
         value={value}
         placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-        className="num flex-1 bg-surface border border-divider rounded-md px-3 py-2 text-text-hi placeholder:text-text-lo focus:border-accent focus:outline-none"
+        onChange={(e) =>
+          dispatch({ type: 'set-raw', event: code, value: e.target.value })
+        }
+        className="num bg-transparent border-0 border-b border-paper-2 px-1 py-1 text-ink placeholder:text-ink-lo focus:border-accent focus:outline-none w-full"
       />
+      <span
+        data-testid={`acft-points-${code}`}
+        className={`num text-right text-base ${pointsClass}`}
+      >
+        {pointsDisplay}
+      </span>
     </div>
   );
 }

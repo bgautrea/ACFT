@@ -10,6 +10,11 @@
 /build
 /dist
 
+# TypeScript build artifacts
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
 # misc
 .DS_Store
 .env.local

@@ -27,8 +27,8 @@ describe('TotalStrip', () => {
     );
     const total = screen.getByTestId('acft-total');
     expect(total).toHaveTextContent('120');
-    expect(total.className).toContain('text-ink');
-    expect(total.className).not.toContain('text-accent');
+    expect(total).toHaveClass('text-ink');
+    expect(total).not.toHaveClass('text-accent');
     expect(screen.getByTestId('acft-status')).toHaveTextContent('—');
   });
 
@@ -43,10 +43,11 @@ describe('TotalStrip', () => {
     );
     const total = screen.getByTestId('acft-total');
     expect(total).toHaveTextContent('359');
-    expect(total.className).toContain('text-ink');
+    expect(total).toHaveClass('text-ink');
+    expect(total).not.toHaveClass('text-accent');
     const status = screen.getByTestId('acft-status');
     expect(status).toHaveTextContent('FAIL');
-    expect(status.className).toContain('text-fail');
+    expect(status).toHaveClass('text-fail');
   });
 
   it('renders PASS in pass color and accents the total when complete and passing', () => {
@@ -60,10 +61,10 @@ describe('TotalStrip', () => {
     );
     const total = screen.getByTestId('acft-total');
     expect(total).toHaveTextContent('500');
-    expect(total.className).toContain('text-accent');
+    expect(total).toHaveClass('text-accent');
     const status = screen.getByTestId('acft-status');
     expect(status).toHaveTextContent('PASS');
-    expect(status.className).toContain('text-pass');
+    expect(status).toHaveClass('text-pass');
   });
 
   it('marks the total as an aria-live region', () => {

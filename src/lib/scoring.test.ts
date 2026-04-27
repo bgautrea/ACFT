@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   bucketAge,
-  scoreMDL, scoreSPT, scoreHRP, scoreSDC, scorePLK, scoreTMR,
+  scoreMDL, scoreSDC,
   scoreAll,
 } from './scoring';
 

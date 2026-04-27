@@ -1,4 +1,5 @@
 import standardsData from '../data/standards.json';
+import type { UrlPayload } from './url';
 
 export type Sex = 'M' | 'F';
 
@@ -25,7 +26,8 @@ export type Action =
   | { type: 'set-age'; age: number }
   | { type: 'set-sex'; sex: Sex }
   | { type: 'set-raw'; event: EventCode; value: string }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  | { type: 'load-from-url'; partial: UrlPayload };
 
 export type EventResult = { points: number; pass: boolean };
 

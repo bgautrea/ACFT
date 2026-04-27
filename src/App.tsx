@@ -1,39 +1,62 @@
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import Wordmark from './components/Wordmark';
 import TotalStrip from './components/TotalStrip';
 import IdentityRow from './components/IdentityRow';
 import EventForm from './components/EventForm';
 import Footer from './components/Footer';
+import ShareButton from './components/ShareButton';
+import RestoreBanner from './components/RestoreBanner';
 import { reducer } from './lib/reducer';
-import { hydrate, save } from './lib/persist';
+import { save } from './lib/persist';
 import { scoreAll } from './lib/scoring';
-import { EVENT_CODES } from './lib/types';
+import { EVENT_CODES, type State } from './lib/types';
+import { composeInitialState } from './lib/initialState';
+import { useUrlSync } from './lib/useUrlSync';
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, undefined, hydrate);
+  const [initial] = useState(composeInitialState);
+  const [reducerState, dispatch] = useReducer(reducer, initial.state);
+  const [snapshot, setSnapshot] = useState<State | null>(initial.undoSnapshot);
 
   useEffect(() => {
-    const handle = setTimeout(() => save(state), 200);
+    const handle = setTimeout(() => save(reducerState), 200);
     return () => clearTimeout(handle);
-  }, [state]);
+  }, [reducerState]);
 
-  const result = useMemo(() => scoreAll(state), [state]);
+  useUrlSync(reducerState);
+
+  const result = useMemo(() => scoreAll(reducerState), [reducerState]);
 
   const hasInput = useMemo(
-    () => EVENT_CODES.some((c) => state.raw[c].trim() !== ''),
-    [state.raw],
+    () => EVENT_CODES.some((c) => reducerState.raw[c].trim() !== ''),
+    [reducerState.raw],
   );
 
   const isComplete = useMemo(
-    () => EVENT_CODES.every((c) => state.raw[c].trim() !== ''),
-    [state.raw],
+    () => EVENT_CODES.every((c) => reducerState.raw[c].trim() !== ''),
+    [reducerState.raw],
   );
+
+  function handleRestore(snap: State) {
+    dispatch({
+      type: 'load-from-url',
+      partial: { age: snap.age, sex: snap.sex, raw: snap.raw },
+    });
+    setSnapshot(null);
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-paper text-ink">
       <div className="mx-auto w-full max-w-[720px] px-4">
-        <Wordmark />
+        <Wordmark right={<ShareButton />} />
       </div>
+      {snapshot ? (
+        <RestoreBanner
+          snapshot={snapshot}
+          onRestore={handleRestore}
+          onDismiss={() => setSnapshot(null)}
+        />
+      ) : null}
       <TotalStrip
         total={result.total}
         hasInput={hasInput}
@@ -41,8 +64,8 @@ export default function App() {
         overallPass={result.overallPass}
       />
       <main className="mx-auto w-full max-w-[720px] px-4 flex-1">
-        <IdentityRow age={state.age} sex={state.sex} dispatch={dispatch} />
-        <EventForm raw={state.raw} result={result} dispatch={dispatch} />
+        <IdentityRow age={reducerState.age} sex={reducerState.sex} dispatch={dispatch} />
+        <EventForm raw={reducerState.raw} result={result} dispatch={dispatch} />
         <Footer />
       </main>
     </div>

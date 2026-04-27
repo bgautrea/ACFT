@@ -20,4 +20,14 @@ describe('Wordmark', () => {
     const heading = screen.getByRole('heading', { level: 1, name: 'ACFT' });
     expect(heading.className).toContain('wordmark');
   });
+
+  it('renders a right-slot child when provided', () => {
+    render(<Wordmark right={<span data-testid="right-slot">SLOT</span>} />);
+    expect(screen.getByTestId('right-slot')).toBeInTheDocument();
+  });
+
+  it('renders without a right slot when none is provided', () => {
+    render(<Wordmark />);
+    expect(screen.queryByTestId('right-slot')).not.toBeInTheDocument();
+  });
 });

@@ -1,5 +1,11 @@
 import EventRow from './EventRow';
-import { EVENT_CODES, type Action, type EventCode, type RawScores } from '../lib/types';
+import {
+  EVENT_CODES,
+  type Action,
+  type EventCode,
+  type RawScores,
+  type ScoreResult,
+} from '../lib/types';
 
 const LABELS: Record<EventCode, string> = {
   MDL: 'MDL',
@@ -21,10 +27,11 @@ const PLACEHOLDERS: Record<EventCode, string> = {
 
 type Props = {
   raw: RawScores;
+  result: ScoreResult;
   dispatch: (action: Action) => void;
 };
 
-export default function EventForm({ raw, dispatch }: Props) {
+export default function EventForm({ raw, result, dispatch }: Props) {
   return (
     <div>
       {EVENT_CODES.map((code) => (
@@ -32,9 +39,11 @@ export default function EventForm({ raw, dispatch }: Props) {
           key={code}
           code={code}
           label={LABELS[code]}
-          value={raw[code]}
           placeholder={PLACEHOLDERS[code]}
-          onChange={(value) => dispatch({ type: 'set-raw', event: code, value })}
+          value={raw[code]}
+          points={result.events[code].points}
+          pass={result.events[code].pass}
+          dispatch={dispatch}
         />
       ))}
     </div>

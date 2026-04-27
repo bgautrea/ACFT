@@ -7,6 +7,7 @@ type Props = {
   value: string;
   points: number;
   pass: boolean;
+  delta?: string | null;
   dispatch: (action: Action) => void;
 };
 
@@ -17,6 +18,7 @@ export default function EventRow({
   value,
   points,
   pass,
+  delta,
   dispatch,
 }: Props) {
   const id = `acft-${code.toLowerCase()}`;
@@ -29,7 +31,7 @@ export default function EventRow({
   const pointsDisplay = hasValue ? String(points) : '';
 
   return (
-    <div className="grid grid-cols-[3.5rem_1fr_3rem] items-center gap-4 py-3 border-b border-paper-2 last:border-b-0">
+    <div className="grid grid-cols-[3.5rem_1fr_3rem_4.5rem] items-center gap-3 py-3 border-b border-paper-2 last:border-b-0">
       <label
         htmlFor={id}
         className="text-[11px] tracking-[0.18em] uppercase text-ink-md font-medium"
@@ -55,6 +57,14 @@ export default function EventRow({
       >
         {pointsDisplay}
       </span>
+      {delta ? (
+        <span
+          data-testid={`acft-delta-${code}`}
+          className="num text-right text-[10px] tracking-[0.1em] uppercase text-ink-md transition-colors duration-150"
+        >
+          {delta}
+        </span>
+      ) : null}
     </div>
   );
 }

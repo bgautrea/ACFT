@@ -28,10 +28,11 @@ const PLACEHOLDERS: Record<EventCode, string> = {
 type Props = {
   raw: RawScores;
   result: ScoreResult;
+  deltas: Record<EventCode, string | null>;
   dispatch: (action: Action) => void;
 };
 
-export default function EventForm({ raw, result, dispatch }: Props) {
+export default function EventForm({ raw, result, deltas, dispatch }: Props) {
   return (
     <div>
       {EVENT_CODES.map((code) => (
@@ -43,6 +44,7 @@ export default function EventForm({ raw, result, dispatch }: Props) {
           value={raw[code]}
           points={result.events[code].points}
           pass={result.events[code].pass}
+          delta={deltas[code]}
           dispatch={dispatch}
         />
       ))}

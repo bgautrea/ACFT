@@ -64,4 +64,36 @@ describe('EventRow', () => {
       value: '240',
     });
   });
+
+  it('renders the delta string in the 4th column when provided', () => {
+    render(
+      <EventRow
+        code="MDL"
+        label="MDL"
+        placeholder="240 lb"
+        value="130"
+        points={50}
+        pass={false}
+        delta="+10 lb"
+        dispatch={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('acft-delta-MDL')).toHaveTextContent('+10 lb');
+  });
+
+  it('does not render the delta cell when delta is null', () => {
+    render(
+      <EventRow
+        code="MDL"
+        label="MDL"
+        placeholder="240 lb"
+        value=""
+        points={0}
+        pass={false}
+        delta={null}
+        dispatch={() => {}}
+      />,
+    );
+    expect(screen.queryByTestId('acft-delta-MDL')).not.toBeInTheDocument();
+  });
 });

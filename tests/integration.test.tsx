@@ -97,4 +97,21 @@ describe('App integration', () => {
       screen.getByRole('button', { name: /share scorecard/i }),
     ).toBeInTheDocument();
   });
+
+  it('shows a delta on a failing event and clears it once passing', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    // Default state is age 22, sex M. MDL threshold is 140 lb.
+    const mdl = screen.getByLabelText(/^MDL$/);
+
+    // Type a failing value (130 lb → 50 pts)
+    await user.type(mdl, '130');
+    expect(screen.getByTestId('acft-delta-MDL')).toHaveTextContent('+10 lb');
+
+    // Bring it to passing (240 lb → 82 pts)
+    await user.clear(mdl);
+    await user.type(mdl, '240');
+    expect(screen.queryByTestId('acft-delta-MDL')).not.toBeInTheDocument();
+  });
 });
